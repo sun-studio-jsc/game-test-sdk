@@ -1,0 +1,20 @@
+{
+    "name": "agent-test",
+    "version": "1.0.0",
+    "description": "E2E test suite for game UI flows — drives the game through the agent server using semantic snapshots",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "playwright": "^1.50.0",
+        "ws": "^8.18.0"
+    },
+    "devDependencies": {
+        "@types/ws": "^8.5.10",
+        "vitest": "^3.0.0",
+        "typescript": "^5.3.3"
+    }
+}
