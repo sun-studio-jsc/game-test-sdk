@@ -91,22 +91,3 @@ export async function waitForScene(
 
     throw new Error(`Timed out waiting for scene '${sceneKey}' after ${timeout}ms`)
 }
-
-export async function waitForStable(client: GameClient, options?: WaitOptions): Promise<void> {
-    const timeout = options?.timeout ?? DEFAULT_TIMEOUT
-    const interval = options?.interval ?? DEFAULT_INTERVAL
-    const deadline = Date.now() + timeout
-
-    let previousTimestamp: number | null = null
-
-    while (Date.now() < deadline) {
-        const snapshot = await client.getSnapshot()
-
-        if (previousTimestamp !== null && snapshot.timestamp === previousTimestamp) return
-
-        previousTimestamp = snapshot.timestamp
-        await sleep(interval)
-    }
-
-    throw new Error(`Timed out waiting for snapshot to stabilize after ${timeout}ms`)
-}
