@@ -34,7 +34,7 @@ export class BrowserClient {
         this.timeout = config.timeout ?? DEFAULT_TIMEOUT
     }
 
-    private connect() {
+    public connect() {
         if (this.config.mode === 'connect') {
             return this.connectOverCDP()
         } else {
@@ -42,7 +42,7 @@ export class BrowserClient {
         }
     }
 
-    async disconnect() {
+    public async disconnect() {
         await this.internalBrowser?.close()
         this.internalBrowser = null
         this.internalContext = null
