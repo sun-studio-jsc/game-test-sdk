@@ -1,5 +1,5 @@
 {
-    "name": "agent-test-sdk",
+    "name": "testing-library",
     "version": "1.0.0",
     "description": "E2E test suite for game UI flows — drives the game through the agent server using semantic snapshots",
     "private": true,

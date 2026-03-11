@@ -3,7 +3,12 @@ import express from 'express'
 import cors from 'cors'
 import { WebSocketServer, WebSocket, type RawData } from 'ws'
 import type { IncomingMessage } from 'node:http'
-import { VALID_ACTIONS, type CommandResult, type CommandStatus, type SemanticSnapshot } from './types'
+import {
+    VALID_ACTIONS,
+    type CommandResult,
+    type CommandStatus,
+    type SemanticSnapshot,
+} from './types'
 import {
     updateSnapshot,
     getSnapshot,
@@ -25,7 +30,13 @@ app.get('/', (_req, res) => res.type('html').send(getViewerHTML()))
 app.get('/snapshot', (_req, res) => {
     const snapshot = getSnapshot()
     if (!snapshot) {
-        return res.json({ error: 'No snapshot available', nodes: [], scenes: [], resolution: [0, 0], timestamp: 0 })
+        return res.json({
+            error: 'No snapshot available',
+            nodes: [],
+            scenes: [],
+            resolution: [0, 0],
+            timestamp: 0,
+        })
     }
     return res.json(snapshot)
 })

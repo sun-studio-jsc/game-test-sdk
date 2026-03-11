@@ -3,12 +3,12 @@ import { CanvasInputAdapter } from '../adapters/CanvasInputAdapter'
 import type { INodeExtractor } from '../interfaces/INodeExtractor'
 import type { ISceneProvider } from '../interfaces/ISceneProvider'
 import type { IInputAdapter } from '../interfaces/IInputAdapter'
-import type { GameAgentConfig, SemanticNode, SemanticSnapshot } from './types'
+import type { GameEngineAdapterConfig, SemanticNode, SemanticSnapshot } from './types'
 
 const WS_RECONNECT_DELAY_MS = 3000
 
-export class GameAgent {
-    private config: GameAgentConfig | null = null
+export class GameEngineAdapter {
+    private config: GameEngineAdapterConfig | null = null
     private snapshot: SemanticSnapshot | null = null
     private commandProcessor: CommandProcessor | null = null
 
@@ -24,12 +24,12 @@ export class GameAgent {
      * Configure the agent with engine-specific adapters.
      * Must be called before the agent can extract snapshots or process commands.
      */
-    configure(config: GameAgentConfig): void {
+    configure(config: GameEngineAdapterConfig): void {
         if (!config.sceneProvider) {
-            throw new Error('GameAgent requires a sceneProvider')
+            throw new Error('GameEngineAdapter requires a sceneProvider')
         }
         if (!config.extractor) {
-            throw new Error('GameAgent requires an extractor')
+            throw new Error('GameEngineAdapter requires an extractor')
         }
 
         this.config = config

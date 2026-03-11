@@ -43,7 +43,7 @@ export interface SemanticSnapshot {
 
 export type CustomHandler = (message: string, payload?: unknown) => void | Promise<void>
 
-export interface GameAgentConfig {
+export interface GameEngineAdapterConfig {
     /** Whether the agent is active. Default: true */
     enabled: boolean
     /** Testing server WebSocket URL. Default: 'http://localhost:3100' */

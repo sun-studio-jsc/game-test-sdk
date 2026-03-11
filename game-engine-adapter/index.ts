@@ -1,5 +1,5 @@
 // Core
-export { GameAgent } from './core/GameAgent'
+export { GameEngineAdapter } from './core/GameEngineAdapter'
 export { CommandProcessor } from './core/CommandProcessor'
 export type { Command } from './core/CommandProcessor'
 
@@ -9,7 +9,7 @@ export type {
     SemanticNode,
     SemanticSnapshot,
     CustomHandler,
-    GameAgentConfig,
+    GameEngineAdapterConfig,
 } from './core/types'
 
 // Interfaces

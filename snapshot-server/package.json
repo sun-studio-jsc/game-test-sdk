@@ -1,5 +1,5 @@
 {
-    "name": "agent-server",
+    "name": "snapshot-server",
     "version": "1.0.0",
     "description": "WebSocket relay server that bridges a running game and test clients via semantic snapshots and commands",
     "private": true,
