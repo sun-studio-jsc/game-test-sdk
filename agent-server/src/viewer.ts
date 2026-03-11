@@ -194,7 +194,7 @@ export function getViewerHTML(): string {
 </head>
 <body>
     <div class="header">
-        <h1>AI Semantic Snapshot Viewer</h1>
+        <h1> Semantic Snapshot Viewer</h1>
         <div class="status">
             <div class="status-item">
                 <div class="dot" id="statusDot"></div>
