@@ -70,7 +70,9 @@ export async function assertScene(client: GameClient, sceneKey: string): Promise
     const snapshot = await client.getSnapshot()
     if (!snapshot.scenes.includes(sceneKey)) {
         throw new Error(
-            `Expected scene '${sceneKey}' to be active, but active scenes are: [${snapshot.scenes.join(', ')}]`
+            `Expected scene '${sceneKey}' to be active, but active scenes are: [${snapshot.scenes.join(
+                ', '
+            )}]`
         )
     }
 }
@@ -79,7 +81,7 @@ export async function assertLayout(
     client: GameClient,
     selectorA: NodeSelector,
     constraints: { above?: NodeSelector; noOverlapWith?: NodeSelector[] }
-): Promise<void> {
+) {
     const snapshot = await client.getSnapshot()
     const nodeA = findOne(snapshot.nodes, selectorA)
 

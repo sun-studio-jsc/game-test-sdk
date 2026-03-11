@@ -75,7 +75,13 @@ export class GameClient {
         return new Promise<CommandResult>((resolve, reject) => {
             const timer = setTimeout(() => {
                 this.pending.delete(commandId)
-                reject(new Error(`Command ${JSON.stringify(cmd)} timed out after ${this.config.commandTimeout}ms`))
+                reject(
+                    new Error(
+                        `Command ${JSON.stringify(cmd)} timed out after ${
+                            this.config.commandTimeout
+                        }ms`
+                    )
+                )
             }, this.config.commandTimeout)
 
             this.pending.set(commandId, { resolve, reject, timer })
@@ -107,7 +113,12 @@ export class GameClient {
     }
 
     private handleMessage(raw: string): void {
-        const msg = JSON.parse(raw) as { type: string; id: string; status: CommandStatus; result?: { error?: string } }
+        const msg = JSON.parse(raw) as {
+            type: string
+            id: string
+            status: CommandStatus
+            result?: { error?: string }
+        }
 
         if (msg.type !== 'command_result') return
 
@@ -126,7 +137,7 @@ export class GameClient {
         }
     }
 
-    private async fetchOrThrow(url: string, init?: RequestInit): Promise<Response> {
+    private async fetchOrThrow(url: string, init?: RequestInit) {
         let response: Response
         try {
             response = await fetch(url, init)
