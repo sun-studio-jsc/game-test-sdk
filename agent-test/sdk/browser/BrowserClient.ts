@@ -1,4 +1,11 @@
-import { chromium, type Browser, type BrowserContext, type Dialog, type Page } from 'playwright'
+import {
+    chromium,
+    Locator,
+    type Browser,
+    type BrowserContext,
+    type Dialog,
+    type Page,
+} from 'playwright'
 
 const DEFAULT_TIMEOUT = 10_000
 
@@ -27,22 +34,22 @@ export class BrowserClient {
         this.timeout = config.timeout ?? DEFAULT_TIMEOUT
     }
 
-    async connect(): Promise<void> {
+    private connect() {
         if (this.config.mode === 'connect') {
-            await this.connectOverCDP()
+            return this.connectOverCDP()
         } else {
-            await this.launchBrowser()
+            return this.launchBrowser()
         }
     }
 
-    async disconnect(): Promise<void> {
+    async disconnect() {
         await this.internalBrowser?.close()
         this.internalBrowser = null
         this.internalContext = null
         this.internalPage = null
     }
 
-    private async connectOverCDP(): Promise<void> {
+    private async connectOverCDP() {
         const cdpUrl = this.config.cdpUrl ?? 'http://localhost:9222'
         this.internalBrowser = await chromium.connectOverCDP(cdpUrl)
         const contexts = this.internalBrowser.contexts()
@@ -51,7 +58,7 @@ export class BrowserClient {
         this.internalPage = pages[0] ?? (await this.internalContext.newPage())
     }
 
-    private async launchBrowser(): Promise<void> {
+    private async launchBrowser() {
         const headless = this.config.headless ?? false
         this.internalBrowser = await chromium.launch({ headless })
         this.internalContext = await this.internalBrowser.newContext()
@@ -60,24 +67,26 @@ export class BrowserClient {
     }
 
     private get page(): Page {
-        if (!this.internalPage) throw new Error('BrowserClient is not connected. Call connect() first.')
+        if (!this.internalPage)
+            throw new Error('BrowserClient is not connected. Call connect() first.')
         return this.internalPage
     }
 
     private get context(): BrowserContext {
-        if (!this.internalContext) throw new Error('BrowserClient is not connected. Call connect() first.')
+        if (!this.internalContext)
+            throw new Error('BrowserClient is not connected. Call connect() first.')
         return this.internalContext
     }
 
-    async navigate(url: string): Promise<void> {
-        await this.page.goto(url, { waitUntil: 'networkidle', timeout: this.timeout })
+    public navigate(url: string) {
+        return this.page.goto(url, { waitUntil: 'networkidle', timeout: this.timeout })
     }
 
-    async reload(): Promise<void> {
-        await this.page.reload({ waitUntil: 'networkidle', timeout: this.timeout })
+    public reload() {
+        return this.page.reload({ waitUntil: 'networkidle', timeout: this.timeout })
     }
 
-    async openTab(url?: string): Promise<BrowserClient> {
+    public async openTab(url?: string) {
         const newPage = await this.context.newPage()
         if (url) await newPage.goto(url, { waitUntil: 'networkidle', timeout: this.timeout })
         const tab = new BrowserClient({ ...this.config })
@@ -87,19 +96,19 @@ export class BrowserClient {
         return tab
     }
 
-    async closeTab(): Promise<void> {
-        await this.page.close()
+    public closeTab() {
+        return this.page.close()
     }
 
-    async pressElement(selector: string): Promise<void> {
-        await this.page.click(selector, { timeout: this.timeout })
+    public pressElement(selector: string) {
+        return this.page.click(selector, { timeout: this.timeout })
     }
 
-    async typeIn(selector: string, text: string): Promise<void> {
-        await this.page.fill(selector, text, { timeout: this.timeout })
+    public typeIn(selector: string, text: string) {
+        return this.page.fill(selector, text, { timeout: this.timeout })
     }
 
-    async isElementVisible(selector: string): Promise<boolean> {
+    public async isElementVisible(selector: string) {
         try {
             const locator = this.page.locator(selector)
             const count = await locator.count()
@@ -110,34 +119,50 @@ export class BrowserClient {
         }
     }
 
-    async waitForElement(selector: string, opts?: WaitElementOptions): Promise<void> {
+    public waitForElement(selector: string, opts?: WaitElementOptions) {
         const state = opts?.state ?? 'visible'
         const timeout = opts?.timeout ?? this.timeout
-        await this.page.waitForSelector(selector, { state, timeout })
+        return this.page.waitForSelector(selector, { state, timeout })
     }
 
-    async assertElement(selector: string, opts?: Pick<WaitElementOptions, 'state'>): Promise<void> {
+    public assertElement(selector: string, opts?: Pick<WaitElementOptions, 'state'>) {
         const state = opts?.state ?? 'visible'
         const locator = this.page.locator(selector)
+
         if (state === 'visible') {
-            const count = await locator.count()
-            if (count === 0) throw new Error(`Expected element "${selector}" to be visible but it was not found`)
-            const isVisible = await locator.first().isVisible()
-            if (!isVisible) throw new Error(`Expected element "${selector}" to be visible but it is hidden`)
-        } else {
-            const count = await locator.count()
-            if (count > 0) {
-                const isVisible = await locator.first().isVisible()
-                if (isVisible) throw new Error(`Expected element "${selector}" to be hidden but it is visible`)
-            }
+            return this.assertElementVisible(selector, locator)
+        }
+
+        return this.assertElementHidden(selector, locator)
+    }
+
+    private async assertElementVisible(selector: string, locator: Locator) {
+        const count = await locator.count()
+        if (count === 0) {
+            throw new Error(`Expected element "${selector}" to be visible but it was not found`)
+        }
+
+        const isVisible = await locator.first().isVisible()
+        if (!isVisible) {
+            throw new Error(`Expected element "${selector}" to be visible but it is hidden`)
         }
     }
 
-    onDialog(handler: (dialog: Dialog) => Promise<void>): void {
-        this.page.on('dialog', handler)
+    private async assertElementHidden(selector: string, locator: Locator) {
+        const count = await locator.count()
+        if (count === 0) return
+
+        const isVisible = await locator.first().isVisible()
+        if (isVisible) {
+            throw new Error(`Expected element "${selector}" to be hidden but it is visible`)
+        }
     }
 
-    async screenshot(path?: string): Promise<Buffer> {
+    public onDialog(handler: (dialog: Dialog) => Promise<void>) {
+        return this.page.on('dialog', handler)
+    }
+
+    public screenshot(path?: string) {
         return this.page.screenshot({ path, type: 'png' })
     }
 
